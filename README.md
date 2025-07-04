@@ -26,7 +26,7 @@
 - `WheelCubeControl.cs`: Player cube movement and input handler
 - `CameraFollow.cs`: Simple camera tracking script
 
-### MEMO
+### 📝 MEMO
 unity 고치기 위해 무엇을 했는지…
 - 다운된 driving 시나리오가 자율주행 모드인것을 알고 자율주행 관련 스크립트 및 컴포넌트 비활성화함
 - unity랑 thrustmaster가 연결 잘 되는지 확인 위해 간단한 시나리오 만듬 (운전대로 cube 조작하기)
