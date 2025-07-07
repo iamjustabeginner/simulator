@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// 사실상 기존 코드 사용하면 됨
 public class CameraFollow : MonoBehaviour
 {
     public Transform target;     // The object the camera follows (your cube)
