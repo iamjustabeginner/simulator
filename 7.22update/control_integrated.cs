@@ -72,7 +72,9 @@ public class IntegratedVehicleController : MonoBehaviour
         // 로그 파일 경로 설정해보자...
         inputLogPath = Path.Combine(Application.persistentDataPath, "input_log.csv");
         inputLogWriter = new StreamWriter(inputLogPath);
-        inputLogWriter.WriteLine("Time,Steering,Throttle,Brake");
+        // 안 되는 변수 있으면 제거하면서...?
+        inputLogWriter.WriteLine("Time,Steering,Throttle,Brake,PosX,PosY,PosZ,Speed,Mode");
+
         
         // 가장 가까운 웨이포인트를 찾아서 시작점으로 설정
         if (waypoints != null && waypoints.Length > 0)
@@ -122,8 +124,17 @@ public class IntegratedVehicleController : MonoBehaviour
             float accel = Mathf.Clamp01((1f - rawGas) / 2f);
             // 브레이크 정규화 (-1 → 1 → 0~1)
             float brakeVal = Mathf.Clamp01((rawBrake + 1f) / 2f);
-        
-            inputLogWriter.WriteLine($"{Time.time:F3},{steer:F3},{accel:F3},{brakeVal:F3}");
+
+            // 여기서 좀더 변수들 작성
+            inputLogWriter.WriteLine(
+                $"{Time.time:F3}," +
+                $"{steer:F3}," +
+                $"{accel:F3}," +
+                $"{brakeVal:F3}," +
+                $"{pos.x:F2},{pos.y:F2},{pos.z:F2}," +
+                $"{speed:F2}," +
+                $"{mode}"
+            );
         }
 
     }
@@ -369,4 +380,5 @@ public class IntegratedVehicleController : MonoBehaviour
     }
 
 }
+
 
