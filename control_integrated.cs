@@ -1,3 +1,5 @@
+//same code as control_intergrated(fix2)
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
@@ -337,3 +339,4 @@ public class IntegratedVehicleController : MonoBehaviour
         }
     }
 }
+
