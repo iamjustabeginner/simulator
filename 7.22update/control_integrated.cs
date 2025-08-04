@@ -1,4 +1,5 @@
 //dainpixel version
+using System.IO;  // 몰라 일단 변수 선언
 
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -24,6 +25,10 @@ public class IntegratedVehicleController : MonoBehaviour
     [Header("Mode Switch Settings")]
     public float idleTimeBeforeAuto = 3f;  // 자동 모드 전환까지 대기 시간
     public float inputThreshold = 0.1f;    // 입력 감지 임계값
+
+    // 로그값 위한 변수 선언
+    private StreamWriter inputLogWriter;
+    private string inputLogPath;
     
     // Input Actions
     private InputAction steering;
@@ -58,10 +63,16 @@ public class IntegratedVehicleController : MonoBehaviour
     
     void Start()
     {
+    
         SetupInput();
         rb = GetComponent<Rigidbody>();
         rb.drag = drag;
         lastInputTime = Time.time;
+        
+        // 로그 파일 경로 설정해보자...
+        inputLogPath = Path.Combine(Application.persistentDataPath, "input_log.csv");
+        inputLogWriter = new StreamWriter(inputLogPath);
+        inputLogWriter.WriteLine("Time,Steering,Throttle,Brake");
         
         // 가장 가까운 웨이포인트를 찾아서 시작점으로 설정
         if (waypoints != null && waypoints.Length > 0)
@@ -100,6 +111,21 @@ public class IntegratedVehicleController : MonoBehaviour
         {
             HandleManualControl();
         }
+
+        if (steering != null && gas != null && brake != null && inputLogWriter != null)
+        {
+            float steer = steering.ReadValue<float>();
+            float rawGas = gas.ReadValue<float>();
+            float rawBrake = brake.ReadValue<float>();
+        
+            // 가스 정규화 (1 → -1 → 0~1)
+            float accel = Mathf.Clamp01((1f - rawGas) / 2f);
+            // 브레이크 정규화 (-1 → 1 → 0~1)
+            float brakeVal = Mathf.Clamp01((rawBrake + 1f) / 2f);
+        
+            inputLogWriter.WriteLine($"{Time.time:F3},{steer:F3},{accel:F3},{brakeVal:F3}");
+        }
+
     }
     
     void CheckInput()
@@ -285,6 +311,15 @@ public class IntegratedVehicleController : MonoBehaviour
         
         Debug.Log($"가장 가까운 웨이포인트: {nearestIndex}, 방향: {waypointDirection}");
     }
+
+    void OnDestroy()
+    {
+        if (inputLogWriter != null)
+        {
+            inputLogWriter.Flush();
+            inputLogWriter.Close();
+        }
+    }
     
     // 디버그용 GUI
     void OnGUI()
@@ -334,3 +369,4 @@ public class IntegratedVehicleController : MonoBehaviour
     }
 
 }
+
